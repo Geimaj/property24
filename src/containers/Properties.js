@@ -8,7 +8,7 @@ import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
-import { useHistory } from "react-router-dom";
+import { LinkBehavior } from "../util";
 
 const useStyles = makeStyles(theme => ({
 	cardGrid: {
@@ -29,13 +29,11 @@ const useStyles = makeStyles(theme => ({
 }));
 export default function Properties({ properties }) {
 	const classes = useStyles();
-	const history = useHistory();
-
 	return (
 		<Container className={classes.cardGrid} maxWidth="md">
 			<Grid container spacing={4}>
 				{properties.map(property => (
-					<Grid item key={property.id} xs={12} sm={6} md={4}>
+					<Grid item key={Math.random() * 500} xs={12} sm={6} md={4}>
 						<Card className={classes.card}>
 							<CardMedia
 								className={classes.cardMedia}
@@ -52,7 +50,14 @@ export default function Properties({ properties }) {
 									variant="h5"
 									component="h2"
 								>
-									{property.name}
+									{property.street}
+								</Typography>
+								<Typography
+									variant="h5"
+									component="h4"
+									color="textSecondary"
+								>
+									{property.city}
 								</Typography>
 								<Typography>R{property.price}</Typography>
 							</CardContent>
@@ -60,16 +65,11 @@ export default function Properties({ properties }) {
 								<Button
 									size="small"
 									color="primary"
-									onClick={() => {
-										history.push(
-											`/property?id=${property.id}`
-										);
-									}}
+									component={LinkBehavior}
+									to={`/property?id=${property.id ||
+										property._id}`}
 								>
 									View
-								</Button>
-								<Button size="small" color="primary">
-									Edit
 								</Button>
 							</CardActions>
 						</Card>

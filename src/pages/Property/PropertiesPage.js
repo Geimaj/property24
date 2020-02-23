@@ -1,5 +1,4 @@
 import React, { useState, useContext, useEffect, Suspense } from "react";
-
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
@@ -7,10 +6,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import { PropertyContext } from "../../context/PropertyContext";
 import { UserContext } from "../../context/UserContext";
-
+import { LinkBehavior } from "../../util";
 import Properties from "../../containers/Properties";
 import { Property as PropertyApi } from "@geimaj/zaio-property24-api/api/Property";
-import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
 	heroContent: {
@@ -42,14 +40,12 @@ export default function PropertiesPage() {
 	const [isPropertySearch, setIsPropertySearch] = useState(true);
 	const { properties, setProperties } = useContext(PropertyContext);
 	const { user } = useContext(UserContext);
-	const history = useHistory();
 
 	// fetch properties everytime user is updated
 	useEffect(() => {
 		if (user.id) {
 			PropertyApi.getAll()
 				.then(res => {
-					console.log(res);
 					setProperties(res);
 				})
 				.catch(err => {
@@ -154,9 +150,8 @@ export default function PropertiesPage() {
 										<Button
 											variant="contained"
 											color="primary"
-											onClick={() =>
-												history.push("/login")
-											}
+											component={LinkBehavior}
+											to={`/login`}
 										>
 											Login
 										</Button>

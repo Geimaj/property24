@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"dependencies": {
-		"@geimaj/zaio-property24-api": "~0.0.2",
+		"@geimaj/zaio-property24-api": "0.0.3",
 		"@material-ui/core": "^4.9.3",
 		"@material-ui/lab": "^4.0.0-alpha.43",
 		"node-sass": "^4.13.1",

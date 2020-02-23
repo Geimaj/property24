@@ -1,12 +1,10 @@
 import React, { useState, useContext, useEffect, Suspense } from "react";
 
 import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Container";
-import { useLocation, useHistory, Link } from "react-router-dom";
-import { PropertyContext } from "../../context/PropertyContext";
+import { useLocation } from "react-router-dom";
 
 import { Property as PropertyApi } from "@geimaj/zaio-property24-api/api/Property";
 import { UserContext } from "../../context/UserContext";
@@ -16,6 +14,9 @@ import {
 	CardContent,
 	CardActions
 } from "@material-ui/core";
+import { LinkBehavior } from "../../util";
+
+console.log(LinkBehavior);
 
 const useSytles = makeStyles(theme => ({
 	media: {
@@ -35,7 +36,6 @@ export default function PropertyPage() {
 	const id = query.get("id");
 	const classes = useSytles();
 	const { user } = useContext(UserContext);
-	const history = useHistory();
 
 	const [property, setProperty] = useState({
 		id: 0,
@@ -63,6 +63,8 @@ export default function PropertyPage() {
 		}
 	}, [user]);
 
+	console.log(property);
+
 	return property ? (
 		<React.Fragment>
 			<div>
@@ -70,7 +72,7 @@ export default function PropertyPage() {
 					<CardActionArea>
 						<CardMedia
 							className={classes.media}
-							title={property.name}
+							title={`${property.street}`}
 							image={
 								property.images.length > 0
 									? property.images[0]
@@ -79,7 +81,7 @@ export default function PropertyPage() {
 						/>
 						<CardContent>
 							<Typography variant="h5" component="h2">
-								{property.name}
+								{property.street}
 							</Typography>
 							<Typography
 								variant="h5"
@@ -118,6 +120,9 @@ export default function PropertyPage() {
 							>
 								Baths: {property.baths}
 							</Typography>
+							<Typography variant="body1" component="p">
+								{property.name}
+							</Typography>
 						</CardContent>
 					</CardActionArea>
 					<CardActions>
@@ -125,9 +130,9 @@ export default function PropertyPage() {
 							size="medium"
 							color="primary"
 							component={LinkBehavior}
-							to={`/agents/${property.postedBy}`}
+							to={`/agent?id=${property.postedBy}`}
 						>
-							Viw seller
+							View seller
 						</Button>
 					</CardActions>
 				</Card>
@@ -137,7 +142,3 @@ export default function PropertyPage() {
 		<>Not a property...</>
 	);
 }
-
-const LinkBehavior = React.forwardRef((props, ref) => (
-	<Link ref={ref} to={props.to} {...props} />
-));
