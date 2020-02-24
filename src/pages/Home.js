@@ -1,10 +1,14 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, Suspense, useContext, useEffect } from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
-import Button from "@material-ui/core/Button";
+import { makeStyles, TextField, Container, Button } from "@material-ui/core";
+import LoginOrChildren from "../hoc/LoginOrChildren";
+import { Autocomplete } from "@material-ui/lab";
+import Properties from "../containers/Properties";
+import { PropertyContext } from "../context/PropertyContext";
+import { UserContext } from "../context/UserContext";
+import { Property as PropertyApi } from "@geimaj/zaio-property24-api/api/Property";
+import Agents from "../containers/Agents";
 
 const useStyles = makeStyles(theme => ({
 	heroContent: {
@@ -22,11 +26,41 @@ const useStyles = makeStyles(theme => ({
 
 const Home = props => {
 	const classes = useStyles();
+	const [isPropertySearch, setIsPropertySearch] = useState(true);
+	const [displayProperties, setDisplayProperties] = useState([]);
+	const [agents, setAgents] = useState([]);
+	const [searchTerm, setSearchTerm] = useState("");
+	const { properties, setProperties } = useContext(PropertyContext);
+
+	const { user } = useContext(UserContext);
+	useEffect(() => {
+		if (user.id) {
+			PropertyApi.getAll()
+				.then(res => {
+					setProperties(res);
+					setDisplayProperties(res);
+				})
+				.catch(err => {
+					console.log(err);
+				});
+		}
+	}, [user]);
+
+	const doSearch = (e, f) => {
+		if (isPropertySearch) {
+			console.log(e);
+			console.log(f);
+			console.log("done search");
+			console.log(searchTerm);
+
+			setDisplayProperties(properties.filter(p => p.name === searchTerm));
+		}
+	};
 
 	return (
 		<>
-			<div className={classes.heroContent}>
-				<Container maxWidth="lg">
+			<LoginOrChildren user={user}>
+				<Container maxWidth="sm">
 					<Typography
 						component="h1"
 						variant="h2"
@@ -34,55 +68,83 @@ const Home = props => {
 						color="textPrimary"
 						gutterBottom
 					>
-						Find your dream home
+						Luxury awaits
 					</Typography>
-					<Typography
-						variant="h5"
-						align="center"
-						color="textSecondary"
-						paragraph
-					>
-						This website does not actually have anything to do with
-						Property24. This project was only used for educational
-						purposes during a coding bootcamp at the Launch Lab.
-					</Typography>
+					<div>
+						<Autocomplete
+							freeSolo
+							id="free-solo-2-demo"
+							disableClearable
+							options={properties.map(property => property.name)}
+							renderInput={params => (
+								<TextField
+									{...params}
+									label="Search input"
+									margin="normal"
+									variant="outlined"
+									InputProps={{
+										...params.InputProps,
+										type: "search"
+									}}
+								/>
+							)}
+							onChange={doSearch}
+						/>
+					</div>
 					<div className={classes.heroButtons}>
 						<Grid container spacing={2} justify="center">
 							<Grid item>
-								<Button variant="contained" color="primary">
-									<Link
-										className={classes.ctaButtons}
-										to="/properties"
-									>
-										Find Property
-									</Link>
+								<Button
+									variant={
+										isPropertySearch
+											? "contained"
+											: "outlined"
+									}
+									color="primary"
+									onClick={() => setIsPropertySearch(true)}
+								>
+									Properties
 								</Button>
 							</Grid>
 							<Grid item>
-								<Button variant="outlined" color="primary">
-									<Link
-										className={classes.ctaButtons}
-										to="/sell"
-									>
-										Sell Property
-									</Link>
+								<Button
+									variant={
+										!isPropertySearch
+											? "contained"
+											: "outlined"
+									}
+									color="primary"
+									onClick={() => setIsPropertySearch(false)}
+								>
+									Agents
 								</Button>
 							</Grid>
 						</Grid>
 					</div>
 				</Container>
-			</div>
+			</LoginOrChildren>
+			{/* <div className={classes.heroContent}></div> */}
 
 			<div>
-				<Typography
-					component="h1"
-					variant="h5"
-					align="center"
-					color="textPrimary"
-					gutterBottom
-				>
-					Lets think of something else good to put here
-				</Typography>
+				{searchTerm && (
+					<Typography
+						component="h1"
+						variant="h4"
+						align="center"
+						color="textSecondary"
+						gutterBottom
+					>
+						Search results for: {searchTerm} (
+						{displayProperties.length})
+					</Typography>
+				)}
+				<Suspense>
+					{isPropertySearch ? (
+						<Properties properties={displayProperties} />
+					) : (
+						<Agents agents={agents} />
+					)}
+				</Suspense>
 			</div>
 		</>
 	);

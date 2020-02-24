@@ -23,7 +23,7 @@ function useQuery() {
 	return new URLSearchParams(useLocation().search);
 }
 
-export default function Agents(props) {
+export default function AgentPage(props) {
 	const classes = useStyles();
 	const { user } = useContext(UserContext);
 	const query = useQuery();
@@ -33,7 +33,6 @@ export default function Agents(props) {
 	const [properties, setProperties] = useState([]);
 
 	useEffect(() => {
-		console.log(agentId);
 		User.getById(agentId).then(a => {
 			setAgent(a);
 

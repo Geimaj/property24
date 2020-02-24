@@ -31,7 +31,7 @@ export default function Navbar() {
 									e.preventDefault();
 									User.logout().then(res => {
 										setUser({ id: null });
-										history.push("/");
+										history.push("/login");
 									});
 								}}
 								className={classes.links}
@@ -58,12 +58,9 @@ export default function Navbar() {
 						<Link to="/properties" className={classes.links}>
 							Properties
 						</Link>
-						{/* <Link to="/Login#signup">Developments</Link>
-						<Link to="/Login#signup">Commercial</Link>
-						<Link to="/Login#signup">Calculators</Link>
-						<Link to="/Login#signup">Advice</Link>
-						<Link to="/Login#signup">List Privatly</Link>
-						<Link to="/Login#signup">bell</Link> */}
+						<Link to="/agents" className={classes.links}>
+							Agents
+						</Link>
 					</Container>
 					<Avatar>{user.username}</Avatar>
 				</Toolbar>

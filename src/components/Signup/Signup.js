@@ -50,7 +50,6 @@ export default function SignUp({ setError }) {
 				if (res.error) {
 					setError(res.error);
 				} else {
-					console.log(res);
 					setUser(res);
 					history.push("/login");
 				}

@@ -16,8 +16,6 @@ import {
 } from "@material-ui/core";
 import { LinkBehavior } from "../../util";
 
-console.log(LinkBehavior);
-
 const useSytles = makeStyles(theme => ({
 	media: {
 		height: 400

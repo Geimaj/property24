@@ -9,8 +9,8 @@ import ErrorPage from "./pages/Error";
 import HomePage from "./pages/Home";
 import PropertiesPage from "./pages/Property/PropertiesPage";
 import PropertyPage from "./pages/Property/PropertyPage";
-import AgentsPage from "./pages/Agent/Agents";
-import AgentPage from "./pages/Agent/Agent";
+import AgentsPage from "./pages/Agent/AgentsPage";
+import AgentPage from "./pages/Agent/AgentPage";
 
 import UserProvider from "./context/UserContext";
 
@@ -26,10 +26,12 @@ function App() {
 			<Navbar />
 			<main>
 				<Switch>
-					<Route exact path="/" component={HomePage} />
 					<Route path="/login" component={LoginPage} />
-
 					<PropertyProvider>
+						<PropertyProvider>
+							<Route exact path="/" component={HomePage} />
+						</PropertyProvider>
+
 						<PropertyProvider>
 							<Route path="/agents" component={AgentsPage} />
 							<Route path="/agent" component={AgentPage} />
