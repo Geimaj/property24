@@ -38,7 +38,6 @@ const Home = props => {
 			PropertyApi.getAll()
 				.then(res => {
 					setProperties(res);
-					setDisplayProperties(res);
 				})
 				.catch(err => {
 					console.log(err);
@@ -46,14 +45,17 @@ const Home = props => {
 		}
 	}, [user]);
 
-	const doSearch = (e, f) => {
-		if (isPropertySearch) {
-			console.log(e);
-			console.log(f);
-			console.log("done search");
-			console.log(searchTerm);
+	useEffect(() => {
+		console.log("set display properties");
+		console.log(displayProperties);
+		setDisplayProperties(properties);
+	}, [properties]);
 
-			setDisplayProperties(properties.filter(p => p.name === searchTerm));
+	const doSearch = search => {
+		if (isPropertySearch) {
+			console.log(search);
+
+			setDisplayProperties(properties.filter(p => p.name === search));
 		}
 	};
 
@@ -88,7 +90,15 @@ const Home = props => {
 									}}
 								/>
 							)}
-							onChange={doSearch}
+							value={searchTerm}
+							onChange={(option, value) => {
+								doSearch(value);
+							}}
+							onInput={() => {
+								if (searchTerm === "") {
+									setDisplayProperties(properties);
+								}
+							}}
 						/>
 					</div>
 					<div className={classes.heroButtons}>

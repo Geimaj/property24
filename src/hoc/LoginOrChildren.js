@@ -60,8 +60,6 @@ export default function LoginOrChildren({ children, user }) {
 			</div>
 		);
 	} else if (children) {
-		console.log("rending child");
-		console.log(children);
 		return children;
 	}
 	return null;
