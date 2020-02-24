@@ -9,6 +9,7 @@ import { PropertyContext } from "../context/PropertyContext";
 import { UserContext } from "../context/UserContext";
 import { Property as PropertyApi } from "@geimaj/zaio-property24-api/api/Property";
 import Agents from "../containers/Agents";
+import { User } from "@geimaj/zaio-property24-api/api/User";
 
 const useStyles = makeStyles(theme => ({
 	heroContent: {
@@ -29,6 +30,7 @@ const Home = props => {
 	const [isPropertySearch, setIsPropertySearch] = useState(true);
 	const [displayProperties, setDisplayProperties] = useState([]);
 	const [agents, setAgents] = useState([]);
+	const [displayAgents, setDisplayAgents] = useState([]);
 	const [searchTerm, setSearchTerm] = useState("");
 	const { properties, setProperties } = useContext(PropertyContext);
 
@@ -42,20 +44,25 @@ const Home = props => {
 				.catch(err => {
 					console.log(err);
 				});
+
+			User.getAgents().then(agents => {
+				if (!agents.error) {
+					setAgents(agents);
+				}
+			});
 		}
 	}, [user]);
 
 	useEffect(() => {
-		console.log("set display properties");
-		console.log(displayProperties);
 		setDisplayProperties(properties);
-	}, [properties]);
+		setDisplayAgents(agents);
+	}, [properties, agents]);
 
 	const doSearch = search => {
 		if (isPropertySearch) {
-			console.log(search);
-
 			setDisplayProperties(properties.filter(p => p.name === search));
+		} else {
+			setDisplayAgents(agents.filter(a => a.fullname === search));
 		}
 	};
 
@@ -77,7 +84,11 @@ const Home = props => {
 							freeSolo
 							id="free-solo-2-demo"
 							disableClearable
-							options={properties.map(property => property.name)}
+							options={
+								isPropertySearch
+									? properties.map(property => property.name)
+									: agents.map(agent => agent.fullname)
+							}
 							renderInput={params => (
 								<TextField
 									{...params}
@@ -96,7 +107,11 @@ const Home = props => {
 							}}
 							onInput={() => {
 								if (searchTerm === "") {
-									setDisplayProperties(properties);
+									if (isPropertySearch) {
+										setDisplayProperties(properties);
+									} else {
+										setDisplayAgents(agents);
+									}
 								}
 							}}
 						/>
@@ -133,10 +148,8 @@ const Home = props => {
 					</div>
 				</Container>
 			</LoginOrChildren>
-			{/* <div className={classes.heroContent}></div> */}
-
 			<div>
-				{searchTerm && (
+				{searchTerm ? (
 					<Typography
 						component="h1"
 						variant="h4"
@@ -147,12 +160,12 @@ const Home = props => {
 						Search results for: {searchTerm} (
 						{displayProperties.length})
 					</Typography>
-				)}
+				) : null}
 				<Suspense>
 					{isPropertySearch ? (
 						<Properties properties={displayProperties} />
 					) : (
-						<Agents agents={agents} />
+						<Agents agents={displayAgents} />
 					)}
 				</Suspense>
 			</div>
