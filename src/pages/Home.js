@@ -56,7 +56,7 @@ const Home = props => {
 	useEffect(() => {
 		setDisplayProperties(properties);
 		setDisplayAgents(agents);
-	}, [properties, agents]);
+	}, [properties, agents, isPropertySearch]);
 
 	const doSearch = search => {
 		if (isPropertySearch) {
